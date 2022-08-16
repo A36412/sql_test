@@ -1,0 +1,88 @@
+create table dau_ky(
+	Ma_Vat_Tu varchar(10) primary key,
+	Ten_Vat_Tu varchar(25),
+	So_Luong int
+)
+create table trong_ky(
+	Ma_Vat_Tu varchar(10),
+	Ten_Vat_Tu varchar(25)primary key,
+	So_Luong_Nhap int,
+	So_Luong_Xuat int
+)
+
+
+insert into dau_ky(Ma_Vat_Tu,Ten_Vat_Tu,So_Luong)
+VALUES('VT003','VatTu003',50)
+insert into trong_ky(Ma_Vat_Tu,Ten_Vat_Tu,So_Luong_Nhap,So_Luong_Xuat)
+VALUES('VT005','VatTu005',200,0)
+
+/*Câu 1*/
+select *
+from dau_ky
+where So_Luong >=10
+order by Ma_Vat_Tu
+/*Câu 1*/
+
+/*Câu 2*/
+select *
+from trong_ky 
+where So_Luong_Nhap != 0 and So_Luong_Xuat !=0
+order by So_Luong_Nhap,So_Luong_Xuat
+/*Câu 2*/
+
+
+/*Câu 3*/
+create view test as
+select Ma_Vat_Tu,Ten_Vat_Tu from dau_ky
+union
+select Ma_Vat_Tu,Ten_Vat_Tu from trong_ky
+
+
+create view test1 as
+select test.Ma_Vat_Tu,test.Ten_Vat_Tu, So_Luong
+from test full join dau_ky on test.Ma_Vat_Tu = dau_ky.Ma_Vat_Tu
+
+
+create view test2 as
+select test.Ma_Vat_Tu,test.Ten_Vat_Tu, So_Luong_Nhap,So_Luong_Xuat
+from test full join trong_ky on test.Ma_Vat_Tu = trong_ky.Ma_Vat_Tu 
+
+
+
+create view ket_qua as
+select test1.Ma_Vat_Tu,test1.Ten_Vat_Tu,So_luong as DauKy,So_Luong_Nhap,So_Luong_Xuat
+from test1 full join test2 on test1.Ma_Vat_Tu = test2.Ma_Vat_Tu
+
+
+create view ket_qua3
+as
+select ma_vat_tu  ,ten_vat_tu,dauky,so_luong_nhap ,so_luong_xuat,
+case 
+	when dauky IS NULL THEN 0
+	else dauky 
+end as Cong1
+,
+case 
+when so_luong_nhap is null then 0
+	else so_luong_nhap 
+end as Cong
+,
+case 
+	when so_luong_xuat is null then 0
+	else so_luong_xuat 
+end as Tru
+
+from ket_qua ;
+
+select ma_vat_tu,ten_vat_tu,dauky,so_luong_nhap,so_luong_xuat,(Cong1 + Cong - Tru)
+from ket_qua3
+
+
+
+/*Câu 3*/
+
+
+
+
+drop view test1
+drop view test2
